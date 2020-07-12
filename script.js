@@ -7,9 +7,10 @@ window.onload = function() {
     var table;
     var win_cond;
     var gameover = false;
-    var ai = "X";
-    var hu2 = "O";
+    var ai = "O";
+    var hu = "X";
     var ai_opponent = false;
+    var ai_as_p1 = false;
     var game_running = false;
     var player = "X";
     var opp = "O";
@@ -38,47 +39,79 @@ window.onload = function() {
     
     document.getElementById("grid").addEventListener("click",function(e){boxclick(e.target.id)});
     
-    var pl_ai = document.getElementById("start_ai");
-    pl_ai.addEventListener("click",aifirstmove);
+    var ai_p2 = document.getElementById("p2_ai");
+    ai_p2.addEventListener("click",make_ai_p2);
     
-    function aifirstmove(){
-        if(player == hu2){
-            alert("A.I already completed his turn, now it's your turn");
-            return;
-        }
+    var ai_p1 = document.getElementById("p1_ai");
+    ai_p1.addEventListener("click",make_ai_p1);
+    
+    function make_ai_p1(){
+        
         if(game_running == true){
-            alert("Currently the game is ongoing, to reset click the 'New Game' button first then click play against computer A.I")
-        }
-        else{
-            if(gameover==true){
-                alert("Please click the 'New Game' button first then click play against computer A.I")
+            if(gameover == true){
+                alert("Game is over. To start again click new game and choose any mode.")
+                return;
+            }
+            if(player == hu){
+                alert("A.I already completed his turn, now it's your turn");
+                return;
             }
             else{
-                document.getElementById("cgm").innerText = "Current Game Mode : Computer Vs Human";
-                document.getElementById("sugp").innerText = "To go again into H v H mode click on new game";
-                ai_opponent = true;
-                if(game_running == false){
-                    var move = minimax(table,ai,ai,hu2);
-                    var boxid = "canvas" + (move.id + 1);
-                    pos_status[move.id] = "true";
-                    
-                    box = document.getElementById(boxid);
-                    ctx = box.getContext("2d");
-                    
-                    draw_x(move.id);
-                    
-                    if(check_winner(table, table[move.id]) == true){
-                        document.getElementById("result").innerText = "Winner : Player '" + table[move.id] +"'(Computer/A.I) !!";
-                        gameover = true;
-                        return;
-                    }
-                    
-                    document.getElementById("result").innerText = "Now your turn.";
-                    player = hu2;
-                    opp = ai;
-                }
+                alert("Currently the game is ongoing, to reset click the 'New Game' button first then choose any mode.")
+                return;
             }
         }
+        else{
+            game_running == true;
+            ai = "X";
+            hu = "O";
+            ai_as_p1 = true;
+        }
+        
+        document.getElementById("cgm").innerText = "Current Game Mode : Computer(P1) Vs Human(P2)";
+        document.getElementById("sugp").innerText = "To go again into H v H mode click on new game";
+        ai_opponent = true;
+        if(ai_as_p1 == true){
+            var move = minimax(table,ai,ai,hu);
+            var boxid = "canvas" + (move.id + 1);
+            pos_status[move.id] = "true";
+            game_running = true;
+            box = document.getElementById(boxid);
+            ctx = box.getContext("2d");
+            if(ai == "X"){
+                draw_x(move.id);
+            }
+                
+            if(check_winner(table, table[move.id]) == true){
+                document.getElementById("result").innerText = "Winner : Player '" + table[move.id] +"'(Computer/A.I) !!";
+                gameover = true;
+                return;
+            }
+                
+            document.getElementById("result").innerText = "Now your turn.";
+            player = hu;
+            opp = ai;
+        }
+    }
+    
+    
+    function make_ai_p2(){
+        
+        if(game_running == true){
+            if(gameover == true){
+                alert("Game is over. To start again click new game and choose any mode.")
+            }
+            else{
+                alert("Currently a game is ongoing. To discard it click new game and choose any mode.")
+            }
+        }
+        else{    
+            ai_opponent = true;
+            document.getElementById("result").innerText = "Now your turn.";
+            document.getElementById("cgm").innerText = "Current Game Mode : Human(P1) Vs Computer(P2)";
+            player = hu;
+            opp = ai;
+       }
     }
     
     var sgg = document.getElementById("sugb");
@@ -165,55 +198,86 @@ window.onload = function() {
                 pos_status[num-1] = true;
                 //table[num-1] = player;
                 
-                if(player == hu2){
-                    draw_o(num-1);
+                if(player == hu){
+                    if(player == "O"){
+                        draw_o(num-1);
+                    }
+                    else{
+                        draw_x(num-1);
+                    }
+                    
                     player = ai;
-                    opp = hu2;
+                    opp = hu;
                     if(check_winner(table, table[num-1])){
                         document.getElementById("result").innerText = "Winner : Player '" + table[num-1] +"' !!";
                         gameover = true;
                         return;
                     }
-                    if(ai_opponent == false){
+                    else if(istablefull() == true){
+                        document.getElementById("result").innerText = "Game Over !! It is a Draw.";
+                        gameover = true;
+                        return;
+                    }
+                    else if(ai_opponent == false){
                     document.getElementById("result").innerText = "Current Turn : Player '" + player +"' !!";
                     }
                 }
                 else if((player == ai) && (ai_opponent == false)){
-                    draw_x(num-1);
-                    player = hu2;
+                    
+                    if(player == "X"){
+                        draw_x(num-1);
+                    }
+                    else{
+                        draw_o(num-1);
+                    }
+                    
+                    player = hu;
                     opp = ai;
                     if(check_winner(table, table[num-1]) == true){
                         document.getElementById("result").innerText = "Winner : Player '" + table[num-1] +"' !!";
                         gameover = true;
                         return;
                     }
-                    document.getElementById("result").innerText = "Current Turn : Player '" + player +"' !!";
+                    else if(istablefull() == true){
+                        document.getElementById("result").innerText = "Game Over !! It is a Draw.";
+                        gameover = true;
+                        return;
+                    }
+                    else{
+                        document.getElementById("result").innerText = "Current Turn : Player '" + player +"' !!";
+                    }
                 }
                 
                 if((player == ai) && (ai_opponent == true)){
-                    var move = minimax(table,ai,ai,hu2);
+                    var move = minimax(table,ai,ai,hu);
                     var boxid = "canvas" + (move.id + 1);
                     pos_status[move.id] = true;
                     //table[move.id] = ai;
                     box = document.getElementById(boxid);
                     ctx = box.getContext("2d");
-                    draw_x(move.id);
+                    
+                    if(ai == "X"){
+                        draw_x(move.id);
+                    }
+                    else{
+                        draw_o(move.id);
+                    }
+                    
                     if(check_winner(table, table[move.id]) == true){
                         document.getElementById("result").innerText = "Winner : Player '" + table[move.id] +"'(Computer/A.I) !!";
                         gameover = true;
                         return;
                     }
-                    
-                    if(istablefull() == false){
+                    else if(istablefull() == true){
+                        document.getElementById("result").innerText = "Game Over !! It is a Draw.";
+                        gameover = true;
+                        return;
+                    }
+                    else{
                         document.getElementById("result").innerText = "Now your turn.";
                     }
-                    player = hu2;
+                    player = hu;
                     opp = ai;
-                }
-                
-                if((istablefull() == true) && (gameover != true)){
-                    document.getElementById("result").innerText = "Game Over !! It is a Draw.";
-                    return;
                 }
             }
             else{
@@ -306,5 +370,3 @@ window.onload = function() {
         document.getElementById("sugp").innerText = sug_txt;
     }
 };
-
-  
