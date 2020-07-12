@@ -52,10 +52,6 @@ window.onload = function() {
                 alert("Game is over. To start again click new game and choose any mode.")
                 return;
             }
-            if(player == hu){
-                alert("A.I already completed his turn, now it's your turn");
-                return;
-            }
             else{
                 alert("Currently the game is ongoing, to reset click the 'New Game' button first then choose any mode.")
                 return;
