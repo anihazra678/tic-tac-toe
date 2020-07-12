@@ -42,7 +42,10 @@ window.onload = function() {
     pl_ai.addEventListener("click",aifirstmove);
     
     function aifirstmove(){
-        
+        if(player == hu2){
+            alert("A.I already completed his turn, now it's your turn");
+            return;
+        }
         if(game_running == true){
             alert("Currently the game is ongoing, to reset click the 'New Game' button first then click play against computer A.I")
         }
