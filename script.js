@@ -16,6 +16,8 @@ window.onload = function() {
     var opp = "O";
     var result = {};
     
+    var win_index;
+    
     pos_status = new Array();
     table = new Array();
     
@@ -151,9 +153,82 @@ window.onload = function() {
         table[index] = "O";
     }
     
+    function draw_hl(){
+        for(var i=0;i<3;i++){
+            var boxid = "canvas" + (win_cond[win_index][i]+1);
+            box = document.getElementById(boxid);
+            ctx = box.getContext("2d");
+        
+            ctx.beginPath();
+            ctx.moveTo(0,50);
+            ctx.lineTo(100,50);
+            ctx.lineWidth = 3;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = "green";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        
+    }
+    
+    function draw_vl(){
+        for(var i=0;i<3;i++){
+            var boxid = "canvas" + (win_cond[win_index][i]+1);
+            box = document.getElementById(boxid);
+            ctx = box.getContext("2d");
+        
+            ctx.beginPath();
+            ctx.moveTo(50,0);
+            ctx.lineTo(50,100);
+            ctx.lineWidth = 3;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = "green";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        
+    }
+    
+    function draw_dl19(){
+        for(var i=0;i<3;i++){
+            var boxid = "canvas" + (win_cond[win_index][i]+1);
+            box = document.getElementById(boxid);
+            ctx = box.getContext("2d");
+        
+            ctx.beginPath();
+            ctx.moveTo(0,0);
+            ctx.lineTo(100,100);
+            ctx.lineWidth = 3;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = "green";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        
+    }
+    
+    function draw_dl37(){
+        for(var i=0;i<3;i++){
+            var boxid = "canvas" + (win_cond[win_index][i]+1);
+            box = document.getElementById(boxid);
+            ctx = box.getContext("2d");
+        
+            ctx.beginPath();
+            ctx.moveTo(100,0);
+            ctx.lineTo(0,100);
+            ctx.lineWidth = 3;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = "green";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        
+    }
+    
     function check_winner(Table, Player){
         for(var j=0; j<win_cond.length; j++){
             if((Table[win_cond[j][0]] == Player) && (Table[win_cond[j][1]] == Player) && (Table[win_cond[j][2]] == Player)){
+                win_index = j;
                 return true;
             }
         }
@@ -205,6 +280,7 @@ window.onload = function() {
                     player = ai;
                     opp = hu;
                     if(check_winner(table, table[num-1])){
+                        draw_winner_line();
                         document.getElementById("result").innerText = "Winner : Player '" + table[num-1] +"' !!";
                         gameover = true;
                         return;
@@ -230,6 +306,7 @@ window.onload = function() {
                     player = hu;
                     opp = ai;
                     if(check_winner(table, table[num-1]) == true){
+                        draw_winner_line();
                         document.getElementById("result").innerText = "Winner : Player '" + table[num-1] +"' !!";
                         gameover = true;
                         return;
@@ -260,6 +337,7 @@ window.onload = function() {
                     }
                     
                     if(check_winner(table, table[move.id]) == true){
+                        draw_winner_line();
                         document.getElementById("result").innerText = "Winner : Player '" + table[move.id] +"'(Computer/A.I) !!";
                         gameover = true;
                         return;
@@ -364,5 +442,20 @@ window.onload = function() {
             sug_txt = "Suggested Move : Row - " + row + ", Column - " + col + ".";
         }
         document.getElementById("sugp").innerText = sug_txt;
+    }
+    
+    function draw_winner_line(){
+        if(win_index < 3){
+            draw_hl();
+        }
+        else if(win_index < 6){
+            draw_vl();
+        }
+        else if(win_index == 6){
+            draw_dl19();
+        }
+        else{
+            draw_dl37();
+        }
     }
 };
