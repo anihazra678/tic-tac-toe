@@ -373,17 +373,17 @@ window.onload = function() {
         return empty_box;
     }
     
-    function minimax(Table, Player, MaxP, MinP){
+    function minimax(Table, Player, MaxP, MinP, dp=0){
         var avlbl = availableboxes(Table);
         
         if(check_winner(Table,MinP)){
-            return { score: -10 };
+            return { score: -10, depth: dp };
         }
         else if(check_winner(Table,MaxP)){
-            return { score: 10 };
+            return { score: 10, depth: dp};
         }
         else if(avlbl.length == 0){
-            return { score: 0 };
+            return { score: 0, depth: dp };
         }
         
         var moves_n_score = [];
@@ -394,12 +394,14 @@ window.onload = function() {
             Table[avlbl[i]] = Player;
             
             if(Player == MaxP){
-                result = minimax(Table, MinP, MaxP, MinP);
+                result = minimax(Table, MinP, MaxP, MinP, dp+1);
                 c_move.score = result.score;
+                c_move.depth = result.depth;
             }
             else{
-                result = minimax(Table, MaxP, MaxP, MinP);
+                result = minimax(Table, MaxP, MaxP, MinP, dp+1);
                 c_move.score = result.score;
+                c_move.depth = result.depth;
             }
             
             Table[avlbl[i]] = "";
@@ -408,12 +410,16 @@ window.onload = function() {
         
         var best_move;
         var best_score;
+        var best_depth = Infinity;
         if(Player == MaxP){
             best_score = -Infinity;
             for(var j=0; j<moves_n_score.length; j++){
-                if(moves_n_score[j].score > best_score){
-                    best_score = moves_n_score[j].score;
-                    best_move = j;
+                if(moves_n_score[j].score >= best_score){
+                    if(moves_n_score[j].depth < best_depth){
+                        best_score = moves_n_score[j].score;
+                        best_move = j;
+                        best_depth = moves_n_score[j].depth;
+                    }
                 }
             }
         }
@@ -436,7 +442,7 @@ window.onload = function() {
             sug_txt = "To play again click on new game. To exit close the tab."
         }
         else{
-            var s_move = minimax(table,player,player,opp);
+            var s_move = minimax(table,player,player,opp,0);
             var row = Math.floor(s_move.id/3)+1;
             var col = (s_move.id%3)+1;
             sug_txt = "Suggested Move : Row - " + row + ", Column - " + col + ".";
