@@ -410,13 +410,17 @@ window.onload = function() {
         
         var best_move;
         var best_score;
-        var best_depth = Infinity;
         if(Player == MaxP){
             best_score = -Infinity;
             for(var j=0; j<moves_n_score.length; j++){
                 if(moves_n_score[j].score >= best_score){
-                    if(moves_n_score[j].depth < best_depth){
+                    if(moves_n_score[j].score > best_score){
                         best_score = moves_n_score[j].score;
+                        best_move = j;
+                        best_depth = moves_n_score[j].depth;
+                    }
+                    else if(moves_n_score[j].depth < best_depth)
+                    {
                         best_move = j;
                         best_depth = moves_n_score[j].depth;
                     }
