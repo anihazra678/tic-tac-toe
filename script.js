@@ -449,7 +449,13 @@ window.onload = function() {
             var s_move = minimax(table,player,player,opp,0);
             var row = Math.floor(s_move.id/3)+1;
             var col = (s_move.id%3)+1;
-            sug_txt = "Suggested Move : Row - " + row + ", Column - " + col + ".";
+            if((row ==2) && (col == 2)){
+                sug_txt = "Try to make a move in the Middle."
+            }
+            else if(((row == 1)||(row == 3)) && ((col == 1)||(col == 3))){
+                sug_txt = "Look for corners."
+            }
+            else sug_txt = "If possible block opponent from acquiring 3 consecutive boxes else look for any empty box.";
         }
         document.getElementById("sugp").innerText = sug_txt;
     }
